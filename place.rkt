@@ -79,13 +79,12 @@
              inventory]))
 
     (define/public (add-item item)
-      (begin 
-        (cons item inventory)))
+        (set! inventory (cons item inventory)))
     
     
     (define/public (receive item giver)
       (begin 
-        (cons item inventory)
+        (set! inventory (cons item inventory))
         (send giver delete-item item)))
     
     

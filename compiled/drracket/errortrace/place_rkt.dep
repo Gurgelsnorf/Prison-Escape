@@ -1,0 +1,1 @@
+("6.4" ("f1fdb140a6a3cc084688410e7ffac239f40a616d" . "fad5d41925484333c2e375aeffe0e8351228f561") #"C:\\Users\\thegr\\OneDrive\\Documents\\GitHub\\Prison-Escape\\character.rkt" #"C:\\Users\\thegr\\OneDrive\\Documents\\GitHub\\Prison-Escape\\item.rkt" (collects #"errortrace" #"errortrace-key.rkt") (collects #"racket" #"main.rkt") (collects #"racket" #"runtime-config.rkt"))

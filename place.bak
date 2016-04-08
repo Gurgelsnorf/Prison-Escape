@@ -77,10 +77,6 @@
              '()]
             [else
              inventory]))
-
-    (define/public (add-item item)
-      (begin 
-        (cons item inventory)))
     
     
     (define/public (receive item giver)
@@ -90,7 +86,7 @@
     
     
         (define/public (delete-item item)
-      (set! inventory (remove item inventory)))     
+      (set! inventory (remove item inventory)))
     
     
         (define/public (create-object-item item-name)

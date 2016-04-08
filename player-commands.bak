@@ -81,11 +81,7 @@
 
 ;inventory 
 (define (inventory-fn arg)
-  (let ((player-inventory (map (lambda (x)
-                                 (cons(send x get-name) (send x get-description)))
-                               (send *player* get-inventory))))
-    (print (car (car player-inventory)))
-    (print (cdr (car player-inventory)))
+  (let ((player-inventory (send *player* get-inventory)))
     (cond
       [(null? arg)
        (if (null? player-inventory)
@@ -94,17 +90,11 @@
              (printf "Inventory: ~n")
              (for-each (lambda (x)
                          (printf "~a ~n" x))
-                       (map (lambda (x)
-                                 (send x get-name))
-                               (send *player* get-inventory)))))]
-      [(null? (filter (lambda (x)
-                        (equal? (car arg) (car x)))
-                      player-inventory))                      
-       (printf "I have no such item called: ~a ~n" (car arg))]
+                       player-inventory)))]
+      [(null? (send *player* get-inventory))
+       (printf "You do not have: ~a ~n" (car arg))]
       [else
-       (cdr (filter (lambda (x)
-                      (equal? (car arg) (car x)))
-                      player-inventory))])))
+       (send (send *player* create-object-item (car arg)) get-description)])))
 (add-command! 'inventory inventory-fn)
       
 ;BARA ETT TESTKOMANDO 

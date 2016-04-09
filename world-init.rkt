@@ -10,27 +10,81 @@
 
 (define *key*
   (new item%
-       [name "Key"]
+       [name 'Key]
        [description "A rusty old key"]))
-
+;ska bort
 
 (define *old-key*
   (new item%
-       [name "Old-key"]
+       [name 'Old-key]
        [description "An old key that is compleatly worn out, still it might have some use none the less."]))
-
+;in prison cell used to pick door
        
 (define *cell-bed*
   (new item%
-       [name "Cell-bed"]
+       [name 'Cell-bed]
        [description "A plain stiff bed. Why couldn't the give me a better one but then agian this is a jail and not an inn."]))
-  
+;need send useless
 
+(define *lesser-soul*
+  (new item%
+       [name 'Lesser-soul]
+       [description "Use the lesser soul to aquire  small amount of souls, or trade it for something valuable."]))
+; send burial
+
+(define *storage-key*
+  (new item%
+       [name 'Storage-key]
+       [description "This key grants me access to the storage"]))
+;send Lucatiel
+
+(define *lucatiels-mask*
+  (new item%
+       [name 'Lucatiels-mask]
+       [description "Mask attached to a ceremonial hat. Belonges to Lucatiel of Mirrah. Normally hats and masks are separate, but these two have been adjoined."]))
+;gavlan has it, give it to Lucatiel
+
+(define *torch*
+  (new item%
+       [name 'Torch]
+       [description "A burning hot torch"]))
+;in storage "burn" storage with it
+
+(define *liquor*
+  (new item%
+       [name 'Liquor]
+       [desription "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]))
+;in storage used on guard door (with milk of the poppy in inventory) do frug the guard for the key
+
+(define *dark-orb*
+  (new item%
+       [name 'Dark-orb]
+       [description "A hex modified from an old sorcery by Gilleah, the father of Hexing."]))
+;found in hospice
+
+(define *Chesters-long-coat*
+  (new item%
+       [name 'Chesters-long-coat]
+       [description "Allowes the wearer to move in silence greatly increasing the ability to sneak"]))
+;aquired from Felkin
+
+(define *milk-of-the-poppy*
+  (new item%
+       [name 'Milk-of-the-poppy]
+       [description "A common extract used to dull pain from diesese or during surgery, the a whole bottle will easily leave anyone unconcious."]))
+;in hospice can only be accessed while haveing Chester's long coat
+
+(define *asylum-key*
+  (new item%
+       [name 'Asylum-key]
+       [description "The key that opens the door out of this horrible place. Better use it wisly when the guards will not be able to hinder my escape."]))
+;aquired from drugged guard-pate
+       
 ;;;;;;;;;;;;;;;;;;;PLACES;;;;;;;;;;;;;;;;;;;;
 
 (define *prison-cell*
   (new place%
-       [name "Prison-Cell"]
+       [name 'Prison-Cell]
        [description "A cold and dark prison cell"]))
 
 (define *corridor*
@@ -47,7 +101,7 @@
 (define *courtyard*
   (new place%
        [name 'Courtyard]
-       [description "There's high wall surronding the whole courtyard and guards everywhere"]))
+       [description "There's high wall surronding the whole courtyard upon the walls seeing anyone passing through. In the north east corner a short bearded man resides."]))
 
 (define *burial*
   (new place%
@@ -80,48 +134,76 @@
 (define *player*
   (new character%
        [name 'PLAYER]
-       [description "THE PLAYER"]
+       [description "You"]
        [place *prison-cell*]
        [talk-line "tjoho!"]
        [inventory '()]))
 
-(define *guard*
+(define *guard-pate*
   (new character%
-       [name 'Guard]
-       [description "A lazy guard who hates his job"]
+       [name 'Guard-Pate]
+       [description "A lazy guard only looking out for himself"]
        [place *corridor*]
-       [talk-line "Hey! Stop that!"]
+       [talk-line "If you think you are ever leaving that cell you have the wrong idea of this place, and I will not need to watch you starve I have wealth that needs aquiering."]
+       [item-talk-line "Where did you find that key? No matter i'll just take it, maybe I can find some use for it instead."]
        [inventory '()]))
+;location prison cell keeps you from leaving until you have talked to him
 
-(define *prisoner1*
+(define *lucatiel*
   (new character%
-       [name "Old-prisoner"]
-       [description "A very old man, he seems to be a bit confused"]
+       [name 'Lucatiel]
+       [description "Lucatiel was one a proud night of Mirrah and now wonders the land of Drangleic due to a curse she is hesitant to talk about."]
        [place *courtyard*]
-       [talk-line "Bla bla bla"]
+       [talk-line "My name is Lucatiel and I come from the land of Mirrah. Don't mind the hollowing it is just the curse, on that note if you ever get your hand on my mask from Gavlan i would be more than pleased."]
+       [item-talk-line "Thank you for keeping my sanity, take this key it might bring you more fortune than it did for me and please rememember my name for I might not."]
        [inventory '()]))
+;location burial has the storage key
 
-(define *prisoner2*
+(define *gavlan*
   (new character%
-       [name "Wierdo"]
-       [description "asdasdasdasdas"]
+       [name 'Gavlan]
+       [description "A short man probably related to the Gyrms, however he seems only interested in wheeling and dealing"]
        [place *courtyard*]
-       [talk-line "Do you have any FÖREMÅL3?"]
+       [talk-line "Who you? I Gavlan. Gavlan wheel? Gavlan deal. Gavlan want soul. Many many soul. Gah hah! What you want? With Gavlan, you wheel? You deal! Gah hah!"]
+       [item-talk-line "Many deal...Many thanks! Gah hah!"]
        [inventory '()]))
+;location courtyard, item Lucatiel's Mask
+
+(define *felkin*
+  (new character%
+       [name 'Felkin]
+       [description "The darkness shrouding Felkin is unnerving to the very core, none the less he might have valuable information but information is not free"]
+       [place *dark-cell*]
+       [talk-line "Unless you can prove that you are not afraid of embracing rhe dark we have nothing to talk about."]
+       [item-talk-line "I see that you are not a person of bigotry judging before knowing anything, take the Chester's Long Coat it will help you embrace the dark and move in silence."]
+       [inventory'()]))
+;location dark-cell, item Chester's-long-coat
+
+(define *licia*
+  (new character%
+       [name 'Licia]
+       [description "A woman devoted to miricles but why is she here?"]
+       [place *hospice*]
+       [talk-line "The need for miracles is everywhere"]
+       [item-talk-line "Why would you steal that from me? If you think you are going to leave this room alive think twice!"]
+       [inventory'()]))
+;location hospice, no item however trigger item-talk-line if stealing milk of the poppy without the coat
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;send commands
-(send *prison-cell* add-character *player*)
-(send *corridor* add-character *guard*)
-(send *courtyard* add-character *prisoner1*)
-(send *courtyard* add-character *prisoner2*)
+;(send *prison-cell* add-character *player*)
+;(send *corridor* add-character *guard*)
+;(send *courtyard* add-character *prisoner1*)
+;(send *courtyard* add-character *prisoner2*)
 ;(send *prison-cell* add-adjacent-location! *corridor*)
 ;(send *corridor* add-adjacent-location! *prison-cell*)
 ;(send *corridor* add-adjacent-location! *basement*)
 ;(send *corridor* add-adjacent-location! *courtyard*)
 ;(send *courtyard* add-adjacent-location! *corridor*)
 ;(send *basement* add-adjacent-location! *corridor*)
-(send *player* add-item *old-key*)
+;(send *player* add-item *old-key*)
 

@@ -6,6 +6,40 @@
 (provide (all-defined-out))
 
 
+;;;;;;;;;;Events;;;;;;;;;;;;
+
+(define (felkin-event)
+  (send *player* recieve *chesters-long-coat* *felkin*))
+
+(define (gavlan-event)
+  (send *player* recieve *lucatiels-mask* *gavlan*))
+
+(define (lucatiel-event)
+  (send *player* recieve *storage-key* *lucatiel*))
+
+(define (box-event)
+  (set! (guard-post 0))
+  (printf "This is sure to get the guard away from their posts ~n"))
+
+(define (liquor-spike)
+  (send *storage* add-item *spiked-liquor*)
+  (printf "There we go this liquor more than effective ~n"))
+
+(define (cell-door-event)
+  (send *prison-cell* add-adjacent-location! *corridor*)
+  (printf "The cell door clicks and with a slight creaking sound opens up ~n"))
+
+(define (storage-door-event)
+  (send *courtyard* add-adjacent-location! *storage*)
+  (printf "A slight stench of mold comes escapes as the door opens and also a hissing sound probably from a torch. The sound of dripping water can aslo be heard ~n"))
+
+(define (asylum-door-event)
+  (if (= 0 guard-post)
+      (begin
+        (send *courtyard* add-adjacent-location! *escape*)
+        (printf "Few things beets the feeling of freedom ~n"))
+      (printf "Game over ~n")))
+  
 ;ITEMS
 
 
@@ -45,7 +79,7 @@
        [description "A hex modified from an old sorcery by Gilleah, the father of Hexing."]))
 ;found in hospice
 
-(define *Chesters-long-coat*
+(define *chesters-long-coat*
   (new item%
        [name 'Chesters-long-coat]
        [description "Allowes the wearer to move in silence greatly increasing the ability to sneak"]))
@@ -221,8 +255,6 @@
 ;location hospice, no item however trigger item-talk-line if stealing milk of the poppy without the coat
 
 
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -235,5 +267,28 @@
 (send *storage* add-item *torch*)
 (send *hospice* add-item *dark-orb*)
 
+;special-item
+(send *prison-cell* add-special-item *cell-door*)
+(send *courtyard* add-special-item *courtyard*)
+(send *storage* add-special-item *stack-of-boxes*)
+(send *storage* add-special-item *liquor*)
 
+;Adjlocations
+(send *corridor* add-adjacent-locations! *prison-cell*)
+(send *corridor* add-adjacent-locations! *dark-cell*)
+(send *courtyard* add-adjacent-locations! *corridor*)
+(send *courtyard* add-adjacent-locations! *burial*)
+(send *courtyard* add-adjacent-locations! *hospice*)
+(send *burial* add-adjacent-locations! *courtyard*)
+(send *dark-cell* add-adjacent-locations! *corridor*)
+(send *sotorage* add-adjacent-locations! *courtyard*)
+(send *hospice* add-adjacent-locations! *courtyard*)
+
+;Characters
+(send *prison-cell* add-character *player*)
+(send *dark-cell* add-character *felkin*)
+(send *courtyard* add-character *gavlan*)
+(send *burial* add-charater *lucatiel*)
+(send *prison-cell* add-character *guard-pate*)
+(send *hospice* add-character *licia*)
 

@@ -26,7 +26,7 @@
        (interaction-loop)]
       [else
        ((get-procedure name) args)
-       (if (= gameover 0)
+       (if (= game-over 0)
            (interaction-loop)
            (printf "Thanks for playing! ~n"))])))
 

@@ -31,7 +31,7 @@
 ;if called with an argumet: gives a description of the argument.
 (define (inspect-fn arg)
   (let ([char-inspect (remove 'PLAYER (send (send *player* get-place) get-all-names))]
-        [item-inspect (send (send *player* get-place) get-inventory)])
+        [item-inspect (append (send (send *player* get-place) get-special-inventory) (send (send *player* get-place) get-inventory))])
     (cond
       [(null? arg)
        (cond
@@ -71,8 +71,10 @@
        (printf "You can't inspect ~a ~n" (car arg))]
       [else
        (print (send
-               (car (remove #f
+               (car (filter (lambda (x)
+                              (not (equal? '() x)))
                             (list
+                             (send (send *player* get-place) create-object-special-item (car arg))
                              (send (send *player* get-place) create-object-character (car arg))
                              (send (send *player* get-place) create-object-item (car arg)))))
                get-description))
@@ -270,19 +272,21 @@
          [else
           (printf "Items in your inventory you can use: ~n")
           (for-each (lambda (x)
-                      (printf "~a ~n" x)) player-inventory)
-          (printf "Items you can use you things on: ~n")
+                      (printf "~a ~n" x)) (map (lambda (x) (send x get-name)) player-inventory))
+          (printf "Items you can use your things on: ~n")
           (for-each (lambda (x)
-                      (printf "~a ~n" x)) special-items)])]
+                      (printf "~a ~n" x)) (map (lambda (x) (send x get-name)) special-items))])]
       [(or (not (equal? 'on (car (cdr arg)))) (null? (cddr arg)))
        (printf "Invalid input form ~n")
        (printf "Correct input: use <item in inventory> on <item in location> ~n")]
       [(or (null? (filter (lambda (x)
                             (equal? (car arg) x))
-                          (player-inventory)))
+                          (map (lambda (x)
+                                 (send x get-name)) player-inventory)))
            (null? (filter (lambda (x)
                             (equal? (car (cddr arg)) x))
-                          special-items)))
+                          (map (lambda (x)
+                                 (send x get-name)) special-items))))
        (printf "You can't use that ~n")]
       [else
        (let ((item1 (send *player* create-object-item
@@ -300,7 +304,8 @@
          (if (equal? item1 (send item2 get-required-item))
              (begin
                (printf "You successfully used the ~a on the ~a ~n" (send item1 get-name) (send item2 get-name))
-               (send item2 get-evet))
+               ((send item2 get-event))
+               (send *player* delete-item item1))
              (printf "You can't use the ~a on the ~a ~n" (send item1 get-name) (send item2 get-name))))])))
 
 (add-command! 'use use-fn)

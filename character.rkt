@@ -72,7 +72,7 @@
                                 (equal? item-name (send x get-name)))
                                 inventory)))
         (if (null? the-item)
-            #f
+            '()
             (car the-item))))
     
     (super-new)))

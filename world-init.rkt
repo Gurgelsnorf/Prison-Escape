@@ -18,7 +18,7 @@
   (send *player* recieve *storage-key* *lucatiel*))
 
 (define (box-event)
-  (set! (guard-post 0))
+  (set! guard-post 0)
   (printf "This is sure to get the guard away from their posts ~n"))
 
 (define (liquor-spike)
@@ -38,7 +38,9 @@
       (begin
         (send *courtyard* add-adjacent-location! *escape*)
         (printf "Few things beets the feeling of freedom ~n"))
-      (printf "Game over ~n")))
+      (begin
+        (printf "You did not manage to escape. The guards are still on their posts and saw everything. ~n Game over ~n")
+        (set! game-over 1))))
   
 ;ITEMS
 
@@ -154,29 +156,29 @@
   (new special-item%
        [name 'Cell-door]
        [description "This door keeps me in here"]
-       [required-item 'Old-key]
-       [event '("Send corridor to adjacent location")]))
+       [required-item *old-key*]
+       [event cell-door-event]))
 
 (define *asylum-door*
   (new special-item%
        [name 'Asylum-door]
        [description "This giant door and the guards guarding it keeps keeps me locked in here till the end of my days if I don't do anything about it"]
-       [required-item 'Asylum-key]
-       [event '("Check if storage is burning ==> free otherwise lost the game")]))
+       [required-item *asylum-key*]
+       [event asylum-door-event]))
 
 (define *stack-of-boxes*
   (new special-item%
        [name 'Stack-of-boxes]
        [description "An assortment of boxes and other rubble, a wonder the torch hasn't set this on fire yet"]
-       [required-item 'Torch]
-       [event '("storage is burning and you can now escape")]))
+       [required-item *torch*]
+       [event box-event]))
 
 (define *liquor*
-  (new item%
+  (new special-item%
        [name 'Liquor]
-       [desription "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]
-       [required-item 'Milk-of-the-poppy]
-       [event "adds spiked liquor to the location instead"]))
+       [description "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]
+       [required-item *milk-of-the-poppy*]
+       [event liquor-spike]))
 ;in storage used on guard door (with milk of the poppy in inventory) do frug the guard for the key
 
 
@@ -189,9 +191,10 @@
        [description "You"]
        [place *prison-cell*]
        [talk-line "tjoho!"]
+       [item-talk-line "Det här ska ine kunnas visas"]
        [inventory '()]
-       [required-item '(nope)]
-       [event '(nope)]))
+       [required-item 'nope]
+       [event 'nope]))
 
 (define *guard-pate*
   (new character%
@@ -201,8 +204,8 @@
        [talk-line "If you think you are ever leaving that cell you have the wrong idea of this place, and I will not need to watch you starve I have wealth that needs aquiering."]
        [item-talk-line '()]
        [inventory '()]
-       [required-item '(nope)]
-       [event '(nope)]))
+       [required-item 'nope]
+       [event 'nope]))
 ;location prison cell keeps you from leaving until you have talked to him
 
 (define *lucatiel*
@@ -213,8 +216,8 @@
        [talk-line "My name is Lucatiel and I come from the land of Mirrah. Don't mind the hollowing it is just the curse, on that note if you ever get your hand on my mask from Gavlan i would be more than pleased."]
        [item-talk-line "Thank you for keeping my sanity, take this key it might bring you more fortune than it did for me and please rememember my name for I might not."]
        [inventory '()]
-       [required-item '(Lucatiels-mask)]
-       [event '("Give the player the storage key")]))
+       [required-item *lucatiels-mask*]
+       [event lucatiel-event]))
 ;location burial has the storage key
 
 (define *gavlan*
@@ -225,8 +228,8 @@
        [talk-line "Who you? I Gavlan. Gavlan wheel? Gavlan deal. Gavlan want soul. Many many soul. Gah hah! What you want? With Gavlan, you wheel? You deal! Gah hah!"]
        [item-talk-line "Many deal...Many thanks! Gah hah!"]
        [inventory '()]
-       [required-item '(Lesser-soul)]
-       [event '("give player Lucatiel's mask")]))
+       [required-item *lesser-soul*]
+       [event gavlan-event]))
 
 ;location courtyard, item Lucatiel's Mask
 
@@ -238,8 +241,8 @@
        [talk-line "Unless you can prove that you are not afraid of embracing rhe dark we have nothing to talk about."]
        [item-talk-line "I see that you are not a person of bigotry judging before knowing anything, take the Chester's Long Coat it will help you embrace the dark and move in silence."]
        [inventory '()]
-       [required-item 'Dark-orb]
-       [event (send *player* recieve 'Chesters-long-coat 'Felkin)]))
+       [required-item *dark-orb*]
+       [event felkin-event]))
 ;location dark-cell, item Chester's-long-coat
 
 (define *licia*
@@ -250,8 +253,8 @@
        [talk-line "The need for miracles is everywhere"]
        [item-talk-line "Why would you steal that from me? If you think you are going to leave this room alive think twice!"]
        [inventory '()]
-       [required-item '(nope)]
-       [event '(nope)]))
+       [required-item 'nope]
+       [event 'nope]))
 ;location hospice, no item however trigger item-talk-line if stealing milk of the poppy without the coat
 
 
@@ -259,7 +262,7 @@
 
 
 ;Item sends from start
-(send *felkin* add-item *Chesters-long-coat*)
+(send *felkin* add-item *chesters-long-coat*)
 (send *gavlan* add-item *lucatiels-mask*)
 (send *lucatiel* add-item *storage-key*)
 (send *prison-cell* add-item *old-key*)
@@ -274,21 +277,28 @@
 (send *storage* add-special-item *liquor*)
 
 ;Adjlocations
-(send *corridor* add-adjacent-locations! *prison-cell*)
-(send *corridor* add-adjacent-locations! *dark-cell*)
-(send *courtyard* add-adjacent-locations! *corridor*)
-(send *courtyard* add-adjacent-locations! *burial*)
-(send *courtyard* add-adjacent-locations! *hospice*)
-(send *burial* add-adjacent-locations! *courtyard*)
-(send *dark-cell* add-adjacent-locations! *corridor*)
-(send *sotorage* add-adjacent-locations! *courtyard*)
-(send *hospice* add-adjacent-locations! *courtyard*)
+(send *corridor* add-adjacent-location! *prison-cell*)
+(send *corridor* add-adjacent-location! *dark-cell*)
+(send *corridor* add-adjacent-location! *courtyard*)
+(send *courtyard* add-adjacent-location! *corridor*)
+(send *courtyard* add-adjacent-location! *burial*)
+(send *courtyard* add-adjacent-location! *hospice*)
+(send *burial* add-adjacent-location! *courtyard*)
+(send *dark-cell* add-adjacent-location! *corridor*)
+(send *storage* add-adjacent-location! *courtyard*)
+(send *hospice* add-adjacent-location! *courtyard*)
 
 ;Characters
 (send *prison-cell* add-character *player*)
 (send *dark-cell* add-character *felkin*)
 (send *courtyard* add-character *gavlan*)
-(send *burial* add-charater *lucatiel*)
+(send *burial* add-character *lucatiel*)
 (send *prison-cell* add-character *guard-pate*)
 (send *hospice* add-character *licia*)
 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;Global variables
+(define guard-post 1)
+(define game-over 0)

@@ -28,7 +28,7 @@
                                 (equal? item-name (send x get-name)))
                               special-inventory)))
         (if (null? the-item)
-            '()
+            #f
             (car the-item))))
     
     (define/public (get-name)
@@ -60,13 +60,18 @@
                                 (equal? character-name (send x get-name)))
                                 characters-in-place)))
         (if (null? the-char)
-            '()
+            #f
             (car the-char))))
     
     (define/public (delete-character character-name)
       (set! characters-in-place (remove
                                  (send this create-object-character character-name)
                                  characters-in-place)))
+
+    (define/public (delete-special-item item-name)
+      (set! special-inventory (remove
+                               (send this create-object-special-item item-name)
+                               special-inventory)))
     
     (define/public (characters)
       (if (null? characters-in-place)
@@ -83,7 +88,7 @@
                                 (equal? location-name (send x get-name)))
                                 adjacent-locations)))
         (if (null? the-place)
-            '()
+            #f
             (car the-place))))
     
     
@@ -112,7 +117,7 @@
                                 (equal? item-name (send x get-name)))
                                 inventory)))
         (if (null? the-item)
-            '()
+            #f
             (car the-item))))
 
     

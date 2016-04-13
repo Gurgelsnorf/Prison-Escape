@@ -72,7 +72,7 @@
       [else
        (print (send
                (car (filter (lambda (x)
-                              (not (equal? '() x)))
+                              (not (equal? #f x)))
                             (list
                              (send (send *player* get-place) create-object-special-item (car arg))
                              (send (send *player* get-place) create-object-character (car arg))
@@ -187,7 +187,7 @@
                       (map (lambda (x)
                              (send x get-name))
                            items-to-take)))
-       (printf "You can't pick up: ~a ~n" (car arg))]
+       (printf "You can't pick up ~a ~n" (car arg))]
       [else
        (send *player* receive (send (send *player* get-place)
                                     create-object-item
@@ -205,48 +205,55 @@
 ; if called with an argument: removes an item from your inventory and places it in another character's
 
 (define (give-fn arg)
-  (let ((player-inventory (send *player* get-inventory)))
+  (let ((player-inventory (send *player* get-inventory))
+        (characters-in-place (remove 'PLAYER (send (send *player* get-place) get-all-names))))
     (cond
       [(null? arg)
-       (if (null? player-inventory)
-           (printf "I don't have any items to give away ~n")
-           (begin
-             (printf "Items you can give away: ~n")
-             (for-each (lambda (x)
-                         (printf "* ~a ~n" x))
-                       (map (lambda (x)
-                              (send x get-name))
-                            player-inventory))))]
-      [(or (not (equal? 'the (car arg))) (not (equal? 'to (car (cddr arg)))) (null? (cdddr arg)) (null? (cddr arg)))
-       (printf "Invalid input form. ~nCorrect input: give the <item> to <character> ~n")]
+       (cond [(null? player-inventory)
+             (printf "I don't have any items to give away ~n")]
+             [(null? characters-in-place)
+              (printf "There's no one in here i can give anything to ~n")]
+             [else
+              (printf "Items you can give away: ~n")
+              (for-each (lambda (x)
+                          (printf "* ~a ~n" x))
+                        (map (lambda (x)
+                               (send x get-name))
+                             player-inventory))
+              (printf "Characters you can give items to: ~n")
+              (for-each (lambda (x)
+                          (printf "* ~a ~n" x))
+                        characters-in-place)])]
+      [(or (null? (cdr arg))  (null? (cddr arg)) (not (equal? 'to (car (cdr arg)))))
+       (printf "Invalid input form. ~nCorrect input: give <item> to <character> ~n")]
       [(null? (filter (lambda (x)
-                        (equal? (car (cdr arg)) x))
+                        (equal? (car arg) x))
                       (map (lambda (x)
                              (send x get-name))
                            player-inventory)))
-       (printf "You can't give away ~a ~n" (car (cdr arg)))]
+       (printf "You can't give away ~a ~n" (car arg))]
       [(null? (filter (lambda(x)
-                        (equal? (car (cdddr arg)) x))
+                        (equal? (car (cddr arg)) x))
                       (remove 'PLAYER (send (send *player* get-place) get-all-names))))
-       (printf "You can't give things to ~a ~n" (car (cdddr arg)))]
+       (printf "You can't give things to ~a ~n" (car (cddr arg)))]
       [else
        (let ((the-character (send (send *player* get-place)
                                    create-object-character
                                    (car (filter (lambda (x)
-                                                  (equal? (car (cdddr arg)) x))
+                                                  (equal? (car (cddr arg)) x))
                                                 (send (send *player* get-place) get-all-names)))))
              (the-item (send *player*
                              create-object-item
                              (car (filter (lambda (x)
-                                            (equal? (car (cdr arg)) x))
+                                            (equal? (car arg) x))
                                           (map (lambda (x)
                                                  (send x get-name))
                                                (send *player* get-inventory)))))))
          (if (equal? the-item (send the-character get-required-item))
              (begin
                (send the-character receive the-item *player*)
-               (printf "You gave the ~a to ~a ~n ~n" (car (cdr arg)) (car (cdddr arg)))
-               (printf "~a - " (car (cdddr arg)))
+               (printf "You gave the ~a to ~a ~n ~n" (car arg) (car (cddr arg)))
+               (printf "~a - " (car (cddr arg)))
                (printf "~a ~n" (send the-character get-item-talk-line))
                ((send the-character get-event)))
              (printf "~a does not have any use for that ~n" (send the-character get-name))))])))
@@ -276,7 +283,7 @@
           (printf "Items you can use your things on: ~n")
           (for-each (lambda (x)
                       (printf "~a ~n" x)) (map (lambda (x) (send x get-name)) special-items))])]
-      [(or (not (equal? 'on (car (cdr arg)))) (null? (cddr arg)))
+      [(or (null? (cdr arg)) (null? (cddr arg)) (not (equal? 'on (car (cdr arg)))))
        (printf "Invalid input form ~n")
        (printf "Correct input: use <item in inventory> on <item in location> ~n")]
       [(or (null? (filter (lambda (x)

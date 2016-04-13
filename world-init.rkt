@@ -9,21 +9,27 @@
 ;;;;;;;;;;Events;;;;;;;;;;;;
 
 (define (felkin-event)
-  (send *player* recieve *chesters-long-coat* *felkin*))
+  (send *player* receive *chesters-long-coat* *felkin*))
 
 (define (gavlan-event)
-  (send *player* recieve *lucatiels-mask* *gavlan*))
+  (send *player* receive *lucatiels-mask* *gavlan*))
 
 (define (lucatiel-event)
-  (send *player* recieve *storage-key* *lucatiel*))
+  (send *player* receive *storage-key* *lucatiel*))
+
+(define (guard-pate-event)
+  (printf "You Lose ~n Game Over ~n")
+  (set! game-over 1))
 
 (define (box-event)
   (set! guard-post 0)
-  (printf "This is sure to get the guard away from their posts ~n"))
+  (printf "This is sure to get the guard away from their posts ~n")
+  (send *storage* delete-special-item 'Stack-of-boxes)
+  (send *storage* add-special-item *burning-boxes*))
 
 (define (liquor-spike)
   (send *storage* add-item *spiked-liquor*)
-  (printf "There we go this liquor more than effective ~n"))
+  (printf "There we go, this liquor is more than effective ~n"))
 
 (define (cell-door-event)
   (send *prison-cell* add-adjacent-location! *corridor*)
@@ -31,7 +37,7 @@
 
 (define (storage-door-event)
   (send *courtyard* add-adjacent-location! *storage*)
-  (printf "A slight stench of mold comes escapes as the door opens and also a hissing sound probably from a torch. The sound of dripping water can aslo be heard ~n"))
+  (printf "A slight stench of mold escapes as the door opens and also a hissing sound, probably from a torch. The sound of dripping water can aslo be heard ~n"))
 
 (define (asylum-door-event)
   (if (= 0 guard-post)
@@ -39,7 +45,7 @@
         (send *courtyard* add-adjacent-location! *escape*)
         (printf "Few things beets the feeling of freedom ~n"))
       (begin
-        (printf "You did not manage to escape. The guards are still on their posts and saw everything. ~n Game over ~n")
+        (printf "You didn't manage to escape. The guards are still on their posts and saw everything. ~n You Lose ~n Game over ~n")
         (set! game-over 1))))
   
 ;ITEMS
@@ -48,13 +54,13 @@
 (define *old-key*
   (new item%
        [name 'Old-key]
-       [description "An old key that is compleatly worn out, still it might have some use none the less."]))
+       [description "An old key that is completely worn out, still it might have some use none the less"]))
 ;in prison cell used to pick door
 
 (define *lesser-soul*
   (new item%
        [name 'Lesser-soul]
-       [description "Use the lesser soul to aquire  small amount of souls, or trade it for something valuable."]))
+       [description "Use the lesser soul to aquire a small amount of souls, or trade it for something valuable"]))
 ; send burial
 
 (define *storage-key*
@@ -66,7 +72,7 @@
 (define *lucatiels-mask*
   (new item%
        [name 'Lucatiels-mask]
-       [description "Mask attached to a ceremonial hat. Belonges to Lucatiel of Mirrah. Normally hats and masks are separate, but these two have been adjoined."]))
+       [description "Mask attached to a ceremonial hat. Belonges to Lucatiel of Mirrah. Normally hats and masks are separate, but these two have been adjoined"]))
 ;gavlan has it, give it to Lucatiel
 
 (define *torch*
@@ -78,31 +84,32 @@
 (define *dark-orb*
   (new item%
        [name 'Dark-orb]
-       [description "A hex modified from an old sorcery by Gilleah, the father of Hexing."]))
+       [description "A hex modified from an old sorcery by Gilleah, the father of Hexing"]))
 ;found in hospice
 
 (define *chesters-long-coat*
   (new item%
        [name 'Chesters-long-coat]
-       [description "Allowes the wearer to move in silence greatly increasing the ability to sneak"]))
+       [description "Allows the wearer to move in silence greatly increasing the ability to sneak"]))
 ;aquired from Felkin
 
 (define *milk-of-the-poppy*
   (new item%
        [name 'Milk-of-the-poppy]
-       [description "A common extract used to dull pain from diesese or during surgery, the a whole bottle will easily leave anyone unconcious."]))
+       [description "A common extract used to dull pain from diesese or during surgery, a whole bottle will easily leave anyone unconcious"]))
 ;in hospice can only be accessed while haveing Chester's long coat
 
 (define *asylum-key*
   (new item%
        [name 'Asylum-key]
-       [description "The key that opens the door out of this horrible place. Better use it wisly when the guards will not be able to hinder my escape."]))
+       [description "The key that opens the door out of this horrible place. Better use it wisly when the guards will not be able to hinder my escape"]))
 ;aquired from drugged guard-pate
 
 (define *spiked-liquor*
   (new item%
        [name 'Spiked-liquor]
        [description "A liquor that actually can knock someone out before they relise what is going on"]))
+
        
 ;;;;;;;;;;;;;;;;;;;PLACES;;;;;;;;;;;;;;;;;;;;
 
@@ -125,7 +132,7 @@
 (define *courtyard*
   (new place%
        [name 'Courtyard]
-       [description "There's high wall surronding the whole courtyard upon the walls seeing anyone passing through. In the north east corner a short bearded man resides."]))
+       [description "There's high walls surronding the whole courtyard upon the walls seeing anyone passing through. In the north east corner a short bearded man resides."]))
 
 (define *burial*
   (new place%
@@ -169,7 +176,7 @@
 (define *stack-of-boxes*
   (new special-item%
        [name 'Stack-of-boxes]
-       [description "An assortment of boxes and other rubble, a wonder the torch hasn't set this on fire yet"]
+       [description "An assortment of boxes and other rubble, a wonder how the torch hasn't set this on fire yet"]
        [required-item *torch*]
        [event box-event]))
 
@@ -179,9 +186,21 @@
        [description "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]
        [required-item *milk-of-the-poppy*]
        [event liquor-spike]))
-;in storage used on guard door (with milk of the poppy in inventory) do frug the guard for the key
 
+(define *storage-door*
+  (new special-item%
+       [name 'Storage-door]
+       [description "A wooden door locked with a solid padlock, I'm going to need a key for sure"]
+       [required-item *storage-key*]
+       [event storage-door-event]))
+;in storage used on guard door (with milk of the poppy in inventory) do drug the guard for the key
 
+(define *burning-boxes*
+  (new special-item%
+       [name 'Burning-boxes]
+       [description "A burning stack of boxes. It will for sure bring the guards attention away from everything else"]
+       [required-item 'none]
+       [event 'none]))
 ;;;;;;;;;;;;;;;;;;;CHARACTERS;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -202,10 +221,10 @@
        [description "A lazy guard only looking out for himself"]
        [place *corridor*]
        [talk-line "If you think you are ever leaving that cell you have the wrong idea of this place, and I will not need to watch you starve I have wealth that needs aquiering."]
-       [item-talk-line '()]
+       [item-talk-line "Hey! Where did you get that? Don't think you'll get out of here"]
        [inventory '()]
-       [required-item 'nope]
-       [event 'nope]))
+       [required-item *old-key*]
+       [event guard-pate-event]))
 ;location prison cell keeps you from leaving until you have talked to him
 
 (define *lucatiel*
@@ -272,7 +291,8 @@
 
 ;special-item
 (send *prison-cell* add-special-item *cell-door*)
-(send *courtyard* add-special-item *courtyard*)
+(send *courtyard* add-special-item *asylum-door*)
+(send *courtyard* add-special-item *storage-door*)
 (send *storage* add-special-item *stack-of-boxes*)
 (send *storage* add-special-item *liquor*)
 

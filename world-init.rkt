@@ -8,23 +8,12 @@
 
 ;ITEMS
 
-(define *key*
-  (new item%
-       [name 'Key]
-       [description "A rusty old key"]))
-;ska bort
 
 (define *old-key*
   (new item%
        [name 'Old-key]
        [description "An old key that is compleatly worn out, still it might have some use none the less."]))
 ;in prison cell used to pick door
-       
-(define *cell-bed*
-  (new item%
-       [name 'Cell-bed]
-       [description "A plain stiff bed. Why couldn't the give me a better one but then agian this is a jail and not an inn."]))
-;need send useless
 
 (define *lesser-soul*
   (new item%
@@ -50,12 +39,6 @@
        [description "A burning hot torch"]))
 ;in storage "burn" storage with it
 
-(define *liquor*
-  (new item%
-       [name 'Liquor]
-       [desription "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]))
-;in storage used on guard door (with milk of the poppy in inventory) do frug the guard for the key
-
 (define *dark-orb*
   (new item%
        [name 'Dark-orb]
@@ -79,6 +62,11 @@
        [name 'Asylum-key]
        [description "The key that opens the door out of this horrible place. Better use it wisly when the guards will not be able to hinder my escape."]))
 ;aquired from drugged guard-pate
+
+(define *spiked-liquor*
+  (new item%
+       [name 'Spiked-liquor]
+       [description "A liquor that actually can knock someone out before they relise what is going on"]))
        
 ;;;;;;;;;;;;;;;;;;;PLACES;;;;;;;;;;;;;;;;;;;;
 
@@ -126,7 +114,37 @@
        [name 'Escape]
        [description "You really should not be able to read this line of dialogue through playing the game so good job!"]))
 
-       
+;;;;;;;;;;;;;;;;;;;Special-item;;;;;;;;;;;;;;;;;;;
+
+(define *cell-door*
+  (new special-item%
+       [name 'Cell-door]
+       [description "This door keeps me in here"]
+       [required-item 'Old-key]
+       [event '("Send corridor to adjacent location")]))
+
+(define *asylum-door*
+  (new special-item%
+       [name 'Asylum-door]
+       [description "This giant door and the guards guarding it keeps keeps me locked in here till the end of my days if I don't do anything about it"]
+       [required-item 'Asylum-key]
+       [event '("Check if storage is burning ==> free otherwise lost the game")]))
+
+(define *stack-of-boxes*
+  (new special-item%
+       [name 'Stack-of-boxes]
+       [description "An assortment of boxes and other rubble, a wonder the torch hasn't set this on fire yet"]
+       [required-item 'Torch]
+       [event '("storage is burning and you can now escape")]))
+
+(define *liquor*
+  (new item%
+       [name 'Liquor]
+       [desription "Gives of a strong smell of alcohol making it impossible to detect any other smell or proabably any other tastes also for that matter"]
+       [required-item 'Milk-of-the-poppy]
+       [event "adds spiked liquor to the location instead"]))
+;in storage used on guard door (with milk of the poppy in inventory) do frug the guard for the key
+
 
 ;;;;;;;;;;;;;;;;;;;CHARACTERS;;;;;;;;;;;;;;;;;;;;;
 
@@ -137,7 +155,9 @@
        [description "You"]
        [place *prison-cell*]
        [talk-line "tjoho!"]
-       [inventory '()]))
+       [inventory '()]
+       [required-item '(nope)]
+       [event '(nope)]))
 
 (define *guard-pate*
   (new character%
@@ -145,8 +165,10 @@
        [description "A lazy guard only looking out for himself"]
        [place *corridor*]
        [talk-line "If you think you are ever leaving that cell you have the wrong idea of this place, and I will not need to watch you starve I have wealth that needs aquiering."]
-       [item-talk-line "Where did you find that key? No matter i'll just take it, maybe I can find some use for it instead."]
-       [inventory '()]))
+       [item-talk-line '()]
+       [inventory '()]
+       [required-item '(nope)]
+       [event '(nope)]))
 ;location prison cell keeps you from leaving until you have talked to him
 
 (define *lucatiel*
@@ -156,7 +178,9 @@
        [place *courtyard*]
        [talk-line "My name is Lucatiel and I come from the land of Mirrah. Don't mind the hollowing it is just the curse, on that note if you ever get your hand on my mask from Gavlan i would be more than pleased."]
        [item-talk-line "Thank you for keeping my sanity, take this key it might bring you more fortune than it did for me and please rememember my name for I might not."]
-       [inventory '()]))
+       [inventory '()]
+       [required-item '(Lucatiels-mask)]
+       [event '("Give the player the storage key")]))
 ;location burial has the storage key
 
 (define *gavlan*
@@ -166,7 +190,10 @@
        [place *courtyard*]
        [talk-line "Who you? I Gavlan. Gavlan wheel? Gavlan deal. Gavlan want soul. Many many soul. Gah hah! What you want? With Gavlan, you wheel? You deal! Gah hah!"]
        [item-talk-line "Many deal...Many thanks! Gah hah!"]
-       [inventory '()]))
+       [inventory '()]
+       [required-item '(Lesser-soul)]
+       [event '("give player Lucatiel's mask")]))
+
 ;location courtyard, item Lucatiel's Mask
 
 (define *felkin*
@@ -176,7 +203,9 @@
        [place *dark-cell*]
        [talk-line "Unless you can prove that you are not afraid of embracing rhe dark we have nothing to talk about."]
        [item-talk-line "I see that you are not a person of bigotry judging before knowing anything, take the Chester's Long Coat it will help you embrace the dark and move in silence."]
-       [inventory'()]))
+       [inventory '()]
+       [required-item 'Dark-orb]
+       [event (send *player* recieve 'Chesters-long-coat 'Felkin)]))
 ;location dark-cell, item Chester's-long-coat
 
 (define *licia*
@@ -186,7 +215,9 @@
        [place *hospice*]
        [talk-line "The need for miracles is everywhere"]
        [item-talk-line "Why would you steal that from me? If you think you are going to leave this room alive think twice!"]
-       [inventory'()]))
+       [inventory '()]
+       [required-item '(nope)]
+       [event '(nope)]))
 ;location hospice, no item however trigger item-talk-line if stealing milk of the poppy without the coat
 
 
@@ -194,16 +225,15 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;send commands
-;(send *prison-cell* add-character *player*)
-;(send *corridor* add-character *guard*)
-;(send *courtyard* add-character *prisoner1*)
-;(send *courtyard* add-character *prisoner2*)
-;(send *prison-cell* add-adjacent-location! *corridor*)
-;(send *corridor* add-adjacent-location! *prison-cell*)
-;(send *corridor* add-adjacent-location! *basement*)
-;(send *corridor* add-adjacent-location! *courtyard*)
-;(send *courtyard* add-adjacent-location! *corridor*)
-;(send *basement* add-adjacent-location! *corridor*)
-;(send *player* add-item *old-key*)
+
+;Item sends from start
+(send *felkin* add-item *Chesters-long-coat*)
+(send *gavlan* add-item *lucatiels-mask*)
+(send *lucatiel* add-item *storage-key*)
+(send *prison-cell* add-item *old-key*)
+(send *burial* add-item *lesser-soul*)
+(send *storage* add-item *torch*)
+(send *hospice* add-item *dark-orb*)
+
+
 

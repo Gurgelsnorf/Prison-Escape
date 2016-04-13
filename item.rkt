@@ -15,5 +15,18 @@
     (define/public (get-description)
       description)
   (super-new)))
-    
+
+
+(define special-item%
+  (class item%
+    (init-field
+     required-item
+     event)
+
+    (define/public (get-event)
+      event)
+
+    (define/public (get-required-item)
+      required-item)
+    (super-new)))
     

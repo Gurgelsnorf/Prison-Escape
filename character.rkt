@@ -13,9 +13,9 @@
     (init-field name
                 description
                 talk-line
+                item-talk-line
                 place
                 inventory)
-   
     
     (define/public (get-name)
       name)
@@ -28,6 +28,9 @@
     
     (define/public (talk)
       talk-line)
+
+    (define/public (get-item-talk-line)
+      item-talk-line)
     
     (define/public (get-inventory)
       (cond [(null? inventory)

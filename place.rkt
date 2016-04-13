@@ -14,7 +14,22 @@
                 description
                 [adjacent-locations '()]
                 [characters-in-place '()]
-                [inventory '()])
+                [inventory '()]
+                [special-inventory '()])
+
+    (define/public (get-special inventory)
+      special-inventory)
+
+    (define/public (add-special-item item)
+      (set! special-inventory (cons item special-inventory)))
+
+    (define/public (create-object-special-item item-name)
+      (let ((the-item (filter (lambda (x) 
+                                (equal? item-name (send x get-name)))
+                              special-inventory)))
+        (if (null? the-item)
+            #f
+            (car the-item))))
     
     (define/public (get-name)
       name)
@@ -99,7 +114,5 @@
         (if (null? the-item)
             #f
             (car the-item))))
-    
-   
     
     (super-new)))

@@ -259,7 +259,7 @@
 
 (define (use-fn arg)
   (let ((player-inventory (send *player* get-inventory))
-        (special-items (send (send *player* get-plae) get-special-inventory)))
+        (special-items (send (send *player* get-place) get-special-inventory)))
     (cond
       [(null? arg)
        (cond
@@ -302,3 +302,5 @@
                (printf "You successfully used the ~a on the ~a ~n" (send item1 get-name) (send item2 get-name))
                (send item2 get-evet))
              (printf "You can't use the ~a on the ~a ~n" (send item1 get-name) (send item2 get-name))))])))
+
+(add-command! 'use use-fn)

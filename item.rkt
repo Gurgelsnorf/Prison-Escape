@@ -1,5 +1,6 @@
 #lang racket
 (provide item%)
+(provide special-item%)
 
 
 
@@ -18,10 +19,18 @@
 
 
 (define special-item%
-  (class item%
+  (class object%
     (init-field
+     name
+     description
      required-item
      event)
+
+    (define/public (get-name)
+      name)
+
+    (define/public (get-description)
+      description)
 
     (define/public (get-event)
       event)

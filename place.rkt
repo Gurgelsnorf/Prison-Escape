@@ -17,7 +17,7 @@
                 [inventory '()]
                 [special-inventory '()])
 
-    (define/public (get-special inventory)
+    (define/public (get-special-inventory)
       special-inventory)
 
     (define/public (add-special-item item)

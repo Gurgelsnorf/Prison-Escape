@@ -15,8 +15,19 @@
                 talk-line
                 item-talk-line
                 place
-                inventory)
+                inventory
+                required-item
+                event)
+
+    (define/public (get-required-item)
+      required-item)
     
+    (define/public (add-required-item item)
+      (set! required-item item))
+
+    (define/public (get-event)
+      event)
+      
     (define/public (get-name)
       name)
     

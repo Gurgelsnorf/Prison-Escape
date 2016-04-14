@@ -29,11 +29,13 @@
 
 (define (liquor-spike)
   (send *storage* add-item *spiked-liquor*)
-  (printf "There we go, this liquor is more than effective ~n"))
+  (printf "There we go, this liquor is more than effective ~n")
+  (send *storage* delete-special-item 'Liquor))
 
 (define (cell-door-event)
   (send *prison-cell* add-adjacent-location! *corridor*)
-  (printf "The cell door clicks and with a slight creaking sound opens up ~n"))
+  (printf "The cell door clicks and with a slight creaking sound opens up ~n")
+  (send *guard-pate* move-to *escape*))
 
 (define (storage-door-event)
   (send *courtyard* add-adjacent-location! *storage*)
@@ -47,7 +49,17 @@
       (begin
         (printf "You didn't manage to escape. The guards are still on their posts and saw everything. ~n You Lose ~n Game over ~n")
         (set! game-over 1))))
-  
+
+(define (guard-room-door)
+  (send *burial* add-item *asylum-key*)
+  (printf "Out of the door comes Pate, the frown on his face when he pickes up the liquor is all  to satiesfying. Even though he tries to sneak of to the burial everyone can clearly see him.")
+  (send *lucatiel* move-to *escape*))
+
+(define (poppy-event)
+  (send *hospice* add-item *poppy-vial*)
+  (printf "With this coat I can steal it right under her nose")
+  (send *hospice* delete-special-item 'Milk-of-the-poppy))
+
 ;ITEMS
 
 
@@ -93,7 +105,7 @@
        [description "Allows the wearer to move in silence greatly increasing the ability to sneak"]))
 ;aquired from Felkin
 
-(define *milk-of-the-poppy*
+(define *poppy-vial*
   (new item%
        [name 'Milk-of-the-poppy]
        [description "A common extract used to dull pain from diesese or during surgery, a whole bottle will easily leave anyone unconcious"]))
@@ -201,6 +213,14 @@
        [description "A burning stack of boxes. It will for sure bring the guards attention away from everything else"]
        [required-item 'none]
        [event 'none]))
+
+(define *milk-of-the-poppy*
+  (new special-item%
+       [name 'Milk-of-the-poppy]
+       [description "This vial could be imensly useful but Licia is not going to let me take it"]
+       [required-item 'Chesters-long-coat]
+       [event poppy-event]))
+
 ;;;;;;;;;;;;;;;;;;;CHARACTERS;;;;;;;;;;;;;;;;;;;;;
 
 
